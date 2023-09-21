@@ -1,0 +1,15 @@
+[target.aarch64-apple-darwin]
+image = "aarch64-apple-darwin-cross"
+
+[target.aarch64-apple-darwin.dockerfile]
+file = "cross/docker/cross-toolchains/docker/Dockerfile.aarch64-apple-darwin-cross"
+context = "cross/docker"
+build-args = { MACOS_SDK_URL = "https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.3.sdk.tar.xz" }
+
+[target.x86_64-apple-darwin]
+image = "x86_64-apple-darwin-cross"
+
+[target.x86_64-apple-darwin.dockerfile]
+file = "cross/docker/cross-toolchains/docker/Dockerfile.x86_64-apple-darwin-cross"
+context = "cross/docker"
+build-args = { MACOS_SDK_URL = "https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.3.sdk.tar.xz" }
