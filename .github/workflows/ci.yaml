@@ -5,6 +5,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      NAME: hello-world
+
     strategy:
       fail-fast: false
       matrix:
@@ -43,9 +46,17 @@ jobs:
 
       - run: echo "FILENAME=$FILENAME" >> $GITHUB_ENV
         env:
-          FILENAME: hello-world${{ contains(matrix.target, 'windows') && '.exe' || '' }}
+          FILENAME: ${{ env.NAME }}${{ contains(matrix.target, 'windows') && '.exe' || '' }}
 
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.FILENAME }}
+          name: ${{ matrix.target }}
           path: target/${{ matrix.target }}/release/${{ env.FILENAME }}
+
+      - run: tar czf $NAME.${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release $FILENAME
+
+      - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ${{ env.NAME }}.${{ matrix.target }}.tar.gz
+          draft: true
