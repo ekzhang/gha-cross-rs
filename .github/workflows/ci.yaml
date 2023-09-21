@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: .
+      - uses: ./.github/actions/cross-release
         with:
           name: hello-world
           target: ${{ matrix.target }}
