@@ -41,8 +41,10 @@ runs:
       if: contains(matrix.target, 'darwin') || contains(matrix.target, 'msvc')
 
     - run: |
-        uppercase_target=$(echo "${{ matrix.target }}" | tr '-' '_' | tr '[:lower:]' '[:upper:]')
-        export CROSS_TARGET_${uppercase_target}_IMAGE=${{ matrix.target }}-cross
+        if ${{ contains(matrix.target, 'darwin') || contains(matrix.target, 'msvc') }}; then
+          uppercase_target=$(echo "${{ matrix.target }}" | tr '-' '_' | tr '[:lower:]' '[:upper:]')
+          export CROSS_TARGET_${uppercase_target}_IMAGE=${{ matrix.target }}-cross
+        fi
         cross build --release --bin ${{ inputs.name }} --target ${{ matrix.target }}
       shell: bash
 
