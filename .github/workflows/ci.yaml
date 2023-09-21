@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         target:
           - aarch64-apple-darwin
@@ -33,10 +34,10 @@ jobs:
 
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
-        if: contains(matrix.target, 'apple')
+        if: contains(matrix.target, 'darwin') || contains(matrix.target, 'msvc')
 
-      - run: git clone --depth 0 --recursive https://github.com/cross-rs/cross
-        if: contains(matrix.target, 'apple')
+      - run: git clone --depth=1 --recursive https://github.com/cross-rs/cross
+        if: contains(matrix.target, 'darwin') || contains(matrix.target, 'msvc')
 
       - run: cross build --release --target ${{ matrix.target }}
 
