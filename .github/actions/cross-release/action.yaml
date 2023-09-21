@@ -40,7 +40,10 @@ runs:
         cache-to: type=gha,mode=max
       if: contains(matrix.target, 'darwin') || contains(matrix.target, 'msvc')
 
-    - run: cross build --release --bin ${{ inputs.name }} --target ${{ matrix.target }}
+    - run: |
+        uppercase_target=$(echo "${{ matrix.target }}" | tr '-' '_' | tr '[:lower:]' '[:upper:]')
+        export CROSS_TARGET_${uppercase_target}_IMAGE=${{ matrix.target }}-cross
+        cross build --release --bin ${{ inputs.name }} --target ${{ matrix.target }}
       shell: bash
 
     - run: |
