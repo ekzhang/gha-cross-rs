@@ -35,11 +35,22 @@ jobs:
 
       - run: curl -sSfL https://github.com/cross-rs/cross/releases/download/v0.2.5/cross-x86_64-unknown-linux-musl.tar.gz | sudo tar xzf - -C /usr/local/bin
 
-      - uses: jpribyl/action-docker-layer-caching@v0.1.1
-        continue-on-error: true
-        if: contains(matrix.target, 'darwin') || contains(matrix.target, 'msvc')
+      - uses: docker/setup-qemu-action@v3
+
+      - uses: docker/setup-buildx-action@v3
 
       - run: git clone --depth=1 --recursive https://github.com/cross-rs/cross
+        if: contains(matrix.target, 'darwin') || contains(matrix.target, 'msvc')
+
+      - uses: docker/build-push-action@v5
+        with:
+          context: cross/docker
+          file: cross/docker/cross-toolchains/docker/Dockerfile.${{ matrix.target }}-cross
+          build-args: |
+            MACOS_SDK_URL=https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.3.sdk.tar.xz
+          tags: "${{ matrix.target }}-cross:latest"
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
         if: contains(matrix.target, 'darwin') || contains(matrix.target, 'msvc')
 
       - run: cross build --release --target ${{ matrix.target }}
